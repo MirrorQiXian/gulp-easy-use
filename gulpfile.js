@@ -26,7 +26,10 @@ gulp.task('dev', function () {
 })
 
 
-gulp.task('build', ['del_dist', 'build_css', 'build_js', 'build_html' ,'imgmin'])
+// build
+gulp.task('build', ['del_dist', 'build_css', 'build_js', 'imgmin'], function () {
+  gulp.start('build_html') // 必须在build_css build_js 之后执行 替换文件
+})
 
 gulp.task('del_dist', function () {
   del.sync('dist')
@@ -59,6 +62,20 @@ gulp.task('build_js', function () {
     .pipe(gulpIf(config.build.versionHash, gulp.dest('')))
 })
 
+const prefix = require('gulp-prefix')
+const htmlmin = require('gulp-htmlmin')
+const htmlminConfig = {
+  // removeComments: true,//清除HTML注释
+  collapseWhitespace: true, // 压缩HTML
+  // collapseBooleanAttributes: true,//省略布尔属性的值 <input checked='true'/> ==> <input />
+  // removeEmptyAttributes: true,//删除所有空格作属性值 <input id='' /> ==> <input />
+  // removeScriptTypeAttributes: true,//删除<script>的type='text/javascript'
+  // removeStyleLinkTypeAttributes: true,//删除<style>和<link>的type='text/css'
+  minifyJS: true, // 压缩页面JS
+  minifyCSS: true// 压缩页面CSS
+}
+const revReplace = require('gulp-rev-replace')
+
 gulp.task('build_html', function () {
   let manifestJs
   let manifestCss
@@ -66,8 +83,7 @@ gulp.task('build_html', function () {
     manifestJs = gulp.src('rev-manifest-js.json')
     manifestCss = gulp.src('rev-manifest-css.json')
   }
-  return gulp.src([`${config.srcPath}/**/*.html`, `!${config.srcPath}/static/_vendor/**/*.html`].concat(config.pug ? [`${config.srcPath}/**/*.pug`, `!${config.srcPath}/_pug/**/*.pug`, `!${config.srcPath}/_modules/**/*.pug`] : []))
-    .pipe(gulpIf(config.pug, pug({ pretty: true })))
+  return gulp.src([`${config.srcPath}/**/*.html`])
     .pipe(gulpIf(!!config.build.cdn, prefix(config.build.cdn, null)))
     .pipe(gulpIf(config.build.htmlmin, htmlmin(htmlminConfig)))
     .pipe(gulpIf(config.build.versionHash, revReplace({ manifest: manifestJs })))
@@ -77,16 +93,16 @@ gulp.task('build_html', function () {
 
 
 // 图片压缩
-// const imagemin = require('gulp-imagemin')
-// const mozjpeg = require('imagemin-mozjpeg')
-// const pngquant = require('imagemin-pngquant')
-// const cache = require('gulp-cache') // 缓存压缩图片，避免重复压缩
+const imagemin = require('gulp-imagemin')
+const mozjpeg = require('imagemin-mozjpeg')
+const pngquant = require('imagemin-pngquant')
+const cache = require('gulp-cache') // 缓存压缩图片，避免重复压缩
 
-// gulp.task('imgmin', function () {
-//   gulp.src(`${config.srcPath}/**/*.{jpg,jpeg,png}`)
-//     .pipe(cache(imagemin([mozjpeg({ quality: 70 }), pngquant({ quality: 70 })])))
-//     .pipe(gulp.dest('dist'))
-// })
+gulp.task('imgmin', function () {
+  gulp.src(`${config.srcPath}/**/*.{jpg,jpeg,png}`)
+    .pipe(cache(imagemin([mozjpeg({ quality: 70 }), pngquant({ quality: 70 })])))
+    .pipe(gulp.dest('dist'))
+})
 
 gulp.task('start', ['build'], function () {
   browserSync.init({
