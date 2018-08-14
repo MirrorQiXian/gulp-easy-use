@@ -31,6 +31,8 @@ gulp.task('build', ['del_dist', 'build_css', 'build_js', 'build_html' ,'imgmin']
 gulp.task('del_dist', function () {
   del.sync('dist')
 })
+// 版本hash构建
+const rev = require('gulp-rev')
 
 const base64 = require('gulp-base64')
 const postcss = require('gulp-postcss')
@@ -46,14 +48,12 @@ gulp.task('build_css', function () {
     .pipe(gulpIf(config.build.versionHash, gulp.dest('')))
 })
 
-const rev = require('gulp-rev')
+const uglify = require('gulp-uglify')
 gulp.task('build_js', function () {
   return gulp.src([`${config.srcPath}/**/*.js`, `!${config.srcPath}/static/_vendor/**/*.js`])
-    .pipe(gulpIf(config.build.jsSourcemap, sourcemaps.init()))
-    .pipe(gulpIf(config.babel, babel()))
+    // .pipe(gulpIf(config.babel, babel()))
     .pipe(gulpIf(config.build.jsmin, uglify({ mangle: { reserved: ['require'] }})))   // seajs 模块 保留require关键词
     .pipe(gulpIf(config.build.versionHash, rev()))
-    .pipe(gulpIf(config.build.jsSourcemap, sourcemaps.write('/maps')))
     .pipe(gulp.dest('dist'))
     .pipe(gulpIf(config.build.versionHash, rev.manifest('rev-manifest-js.json')))
     .pipe(gulpIf(config.build.versionHash, gulp.dest('')))
