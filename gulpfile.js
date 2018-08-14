@@ -6,7 +6,8 @@ const del = require('del')
 const gulpIf = require('gulp-if')
 const fs = require('fs')
 const config = require('./config')
-if(!config.build) config.build = {} 
+if(!config.build) config.build = {}
+
 const middleware = config.proxyTable && Object.prototype.toString.call(config.proxyTable) === '[object Object]' ? Object.keys(config.proxyTable).map(key => proxyMiddleware(key, typeof config.proxyTable[key] === 'string' ? { target: config.proxyTable[key] } : config.proxyTable[key])) : []
 
 // 静态服务器 + 监听 scss/html 文件
