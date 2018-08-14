@@ -4,7 +4,7 @@ const reload = browserSync.reload
 const chokidar = require('chokidar')
 const del = require('del')
 const gulpIf = require('gulp-if')
-
+const fs = require('fs')
 const config = require('./config')
 if(!config.build) config.build = {} 
 const middleware = config.proxyTable && Object.prototype.toString.call(config.proxyTable) === '[object Object]' ? Object.keys(config.proxyTable).map(key => proxyMiddleware(key, typeof config.proxyTable[key] === 'string' ? { target: config.proxyTable[key] } : config.proxyTable[key])) : []
@@ -104,7 +104,7 @@ gulp.task('imgmin', function () {
     .pipe(gulp.dest('dist'))
 })
 
-gulp.task('start', ['build'], function () {
+gulp.task('start', function () {
   browserSync.init({
     server: {
       baseDir: ['dist'],  // 设置服务器的根目录
@@ -116,4 +116,50 @@ gulp.task('start', ['build'], function () {
       ignorePaths: ['/', '/**/*.html'], // 不对任何html进行注入，可以通过是否注入判断是否在 开发模式下
     }
   })
+})
+
+// 一个命令兼容webp
+
+gulp.task('webp', ['generateWebp', 'webpcss', 'webphtml'])
+const generateWebp = require('gulp-webp')
+gulp.task('generateWebp', function () {
+  gulp.src('dist/**/*.{png,jpg,jpeg}')
+    .pipe(generateWebp())
+    .pipe(gulp.dest('./dist'))
+})
+
+const webpcss = require('gulp-webpcss')
+const cssnano = require('gulp-cssnano')
+gulp.task('webpcss', function () {
+  gulp.src('dist/**/*.css')
+    .pipe(webpcss({
+      webpClass: '.__webp__',
+      replace_from: /\.(png|jpg|jpeg)/,
+      replace_to: '.webp',
+    }))
+    .pipe(cssnano())
+    .pipe(gulp.dest('./dist'))
+})
+
+const cheerio = require('gulp-cheerio')
+gulp.task('webphtml', function () {
+  return gulp
+    .src('dist/**/*.html')
+    .pipe(cheerio(function ($, file) {
+      // 插入webp.js
+
+      var webpJs = fs.readFileSync('__webp__.js', 'utf-8')
+      $('head').append(`<script id="__webp__">${webpJs}</script>`)
+
+      $('img[src]:not(.not-webp)').each(function () {
+        var imgEl = $(this)
+        var src = imgEl.attr('src')
+        if (/^http/.test(src)) return
+        imgEl.removeAttr('src')
+        imgEl.attr('data-src', src)
+      })
+
+      if ($('#__webp__').length > 0) return
+    }))
+    .pipe(gulp.dest('dist'))
 })
