@@ -1,5 +1,6 @@
 module.exports ={
   srcPath:'src',
+  spritesPath: 'src/sprites', // 雪碧图生成的目标目录
   build:{
     cssmin:true,
     jsmin:true,

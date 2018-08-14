@@ -163,3 +163,21 @@ gulp.task('webphtml', function () {
     }))
     .pipe(gulp.dest('dist'))
 })
+
+
+//  雪碧图
+const spritesmith = require('gulp.spritesmith')
+gulp.task('sp', function () {
+  // 读取 sprites
+  let spritesList = fs.readdirSync('sprites')
+  let sprites = gulp.src('sprites/*/*.{jpg,png}')
+  spritesList.forEach((spritesItem) => {
+    sprites = sprites.pipe(gulpIf(`${spritesItem}/*.{jpg,png,svg}`, spritesmith({
+      imgName: spritesItem + '.png',
+      cssName: spritesItem + '.css',
+      cssTemplate:'sprites-css.handlebars',
+      imgPath: `./${spritesItem}.png`
+    })))
+  })
+  return sprites.pipe(gulp.dest(config.spritesPath||`${config.srcPath}/sprites/`))
+})

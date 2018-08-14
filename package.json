@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "description": "用于传统开发项目直接移植即可使用",
   "main": "config.js",
-  "dependencies": {
-    "browser-sync": "^2.24.6"
+  "scripts": {
+    "dev": "webpack-dev-server --config webpack.dev.js --mode development",
+    "build": "webpack --config webpack.prod.js --mode production",
+    "imgmin": "gulp imgmin",
+    "sp": "gulp sp",
+    "webp": "gulp webp",
+    "start": "gulp start"
   },
   "devDependencies": {
+    "browser-sync": "^2.24.6",
     "autoprefixer": "^9.1.1",
     "chokidar": "^2.0.4",
     "del": "^3.0.0",
@@ -26,11 +32,9 @@
     "gulp-uglify": "^3.0.1",
     "gulp-webp": "^3.0.0",
     "gulp-webpcss": "^1.1.1",
+    "gulp.spritesmith": "^6.9.0",
     "imagemin-mozjpeg": "^7.0.0",
     "imagemin-pngquant": "^6.0.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC"

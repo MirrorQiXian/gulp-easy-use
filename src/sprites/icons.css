@@ -1,0 +1,29 @@
+.icon-a,
+.icon-b,
+.icon-c,
+.icon-d,
+._useless_{
+  background-image: url(./icons.png);
+  display: inline-block;
+}
+
+.icon-a{
+  background-position: 0px 0px;
+  width: 160px;
+  height: 160px;
+}
+.icon-b{
+  background-position: -160px 0px;
+  width: 160px;
+  height: 160px;
+}
+.icon-c{
+  background-position: 0px -160px;
+  width: 160px;
+  height: 160px;
+}
+.icon-d{
+  background-position: -160px -160px;
+  width: 160px;
+  height: 160px;
+}
