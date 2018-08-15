@@ -2,5 +2,6 @@ body{
   background: #ccc;
   color: #fff;
   transform: translateX(100px);
-  background: url(../img/base64.jpg);
+  /* background: url(../img/base64.jpg); */
+  background: url(../img/gif.gif);
 }
