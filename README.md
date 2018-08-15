@@ -1,16 +1,21 @@
 # gulp-easy-use
-传统项目专用，直接复制到src目录即可享受以下功能
+传统项目专用（指直接使用html，css，js书写的项目），直接复制到src目录即可享受以下功能
 
-## 开发
+如果你想要使用 babel，scss，pug，你可以看这个项目[gulp-easy](https://github.com/lfyfly/gulp-easy)
+
+## 功能简介
+详见配置文件根目录`config.js`
+### 开发
 - 新增文件，文件变动自动刷新
-
-## 打包
+- 代理配置
+### 打包
 - postcss
 - 小图转base64
 - cdn路径
 - html,css,js压缩
 - 版本hash
 - proxy
+
 
 ## 2、如何使用
 ### 2.1 下载项目
