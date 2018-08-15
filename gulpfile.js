@@ -28,7 +28,7 @@ gulp.task('dev', function () {
 
 
 // build
-gulp.task('build', ['del_dist', 'move__min', 'build_css', 'build_js', 'imgmin'], function () {
+gulp.task('build', ['del_dist', 'copy', 'build_css', 'build_js', 'imgmin'], function () {
   gulp.start('build_html') // 必须在build_css build_js 之后执行 替换文件
 })
 
@@ -104,10 +104,12 @@ gulp.task('imgmin', function () {
     .pipe(cache(imagemin([mozjpeg({ quality: 70 }), pngquant({ quality: 70 })])))
     .pipe(gulp.dest('dist'))
 })
-gulp.task('move__min', function () {
-  gulp.src([`${config.srcPath}/**/*.min.css`, `${config.srcPath}/**/*.min.js`])
+
+gulp.task('copy', function () {
+  gulp.src([`${config.srcPath}/**/*.min.css`, `${config.srcPath}/**/*.min.js`,`${config.srcPath}/**/*.min.js`,`${config.srcPath}/**/*.{ico,woff2,eot,ttf,otf,mp4,webm,ogg,mp3,wav,flac,aac}`])
     .pipe(gulp.dest('dist'))
 })
+
 gulp.task('start', function () {
   browserSync.init({
     server: {
