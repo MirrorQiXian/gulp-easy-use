@@ -161,8 +161,10 @@ gulp.task('webphtml', function () {
         var imgEl = $(this)
         var src = imgEl.attr('src')
         if (/^http/.test(src)) return
+        imgEl.css('visibility','hidden')
         imgEl.removeAttr('src')
         imgEl.attr('data-src', src)
+        
       })
 
       if ($('#__webp__').length > 0) return
