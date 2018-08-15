@@ -6,7 +6,7 @@ const del = require('del')
 const gulpIf = require('gulp-if')
 const fs = require('fs')
 const config = require('./config')
-if(!config.build) config.build = {}
+if (!config.build) config.build = {}
 
 const middleware = config.proxyTable && Object.prototype.toString.call(config.proxyTable) === '[object Object]' ? Object.keys(config.proxyTable).map(key => proxyMiddleware(key, typeof config.proxyTable[key] === 'string' ? { target: config.proxyTable[key] } : config.proxyTable[key])) : []
 
@@ -28,7 +28,7 @@ gulp.task('dev', function () {
 
 
 // build
-gulp.task('build', ['del_dist', 'build_css', 'build_js', 'imgmin'], function () {
+gulp.task('build', ['del_dist', 'move__min', 'build_css', 'build_js', 'imgmin'], function () {
   gulp.start('build_html') // 必须在build_css build_js 之后执行 替换文件
 })
 
@@ -42,7 +42,7 @@ const base64 = require('gulp-base64')
 const postcss = require('gulp-postcss')
 const cleanCSS = require('gulp-clean-css')
 gulp.task('build_css', function () {
-  return gulp.src([`${config.srcPath}/**/*.css`])
+  return gulp.src([`${config.srcPath}/**/*.css`, `!${config.srcPath}/**/*.min.css`])
     .pipe(gulpIf(!!config.build.base64, base64({ maxImageSize: config.build.base64 })))
     .pipe(postcss())
     .pipe(gulpIf(config.build.cssmin, cleanCSS({ rebase: false })))
@@ -54,9 +54,9 @@ gulp.task('build_css', function () {
 
 const uglify = require('gulp-uglify')
 gulp.task('build_js', function () {
-  return gulp.src([`${config.srcPath}/**/*.js`, `!${config.srcPath}/static/_vendor/**/*.js`])
+  return gulp.src([`${config.srcPath}/**/*.js`, `!${config.srcPath}/**/*.min.js`])
     // .pipe(gulpIf(config.babel, babel()))
-    .pipe(gulpIf(config.build.jsmin, uglify({ mangle: { reserved: ['require'] }})))   // seajs 模块 保留require关键词
+    .pipe(gulpIf(config.build.jsmin, uglify({ mangle: { reserved: ['require'] } })))   // seajs 模块 保留require关键词
     .pipe(gulpIf(config.build.versionHash, rev()))
     .pipe(gulp.dest('dist'))
     .pipe(gulpIf(config.build.versionHash, rev.manifest('rev-manifest-js.json')))
@@ -104,7 +104,10 @@ gulp.task('imgmin', function () {
     .pipe(cache(imagemin([mozjpeg({ quality: 70 }), pngquant({ quality: 70 })])))
     .pipe(gulp.dest('dist'))
 })
-
+gulp.task('move__min', function () {
+  gulp.src([`${config.srcPath}/**/*.min.css`, `${config.srcPath}/**/*.min.js`])
+    .pipe(gulp.dest('dist'))
+})
 gulp.task('start', function () {
   browserSync.init({
     server: {
@@ -176,9 +179,9 @@ gulp.task('sp', function () {
     sprites = sprites.pipe(gulpIf(`${spritesItem}/*.{jpg,png,svg}`, spritesmith({
       imgName: spritesItem + '.png',
       cssName: spritesItem + '.css',
-      cssTemplate:'sprites-css.handlebars',
+      cssTemplate: 'sprites-css.handlebars',
       imgPath: `./${spritesItem}.png`
     })))
   })
-  return sprites.pipe(gulp.dest(config.spritesPath||`${config.srcPath}/sprites/`))
+  return sprites.pipe(gulp.dest(config.spritesPath || `${config.srcPath}/sprites/`))
 })
