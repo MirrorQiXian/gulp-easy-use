@@ -106,7 +106,7 @@ gulp.task('imgmin', function () {
 })
 
 gulp.task('copy', function () {
-  gulp.src([`${config.srcPath}/**/*.min.css`, `${config.srcPath}/**/*.min.js`,`${config.srcPath}/**/*.min.js`,`${config.srcPath}/**/*.{ico,svg,gif,woff2,eot,ttf,otf,mp4,webm,ogg,mp3,wav,flac,aac}`])
+  gulp.src([`${config.srcPath}/**/*.min.css`, `${config.srcPath}/**/*.min.js`,`${config.srcPath}/**/*.{ico,svg,gif,woff2,eot,ttf,otf,mp4,webm,ogg,mp3,wav,flac,aac}`])
     .pipe(gulp.dest('dist'))
 })
 
