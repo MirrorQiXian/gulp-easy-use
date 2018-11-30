@@ -63,7 +63,6 @@ gulp.task('build_js', function () {
     .pipe(gulpIf(config.build.versionHash, gulp.dest('')))
 })
 
-const prefix = require('gulp-prefix')
 const htmlmin = require('gulp-htmlmin')
 const htmlminConfig = {
   // removeComments: true,//清除HTML注释
@@ -76,7 +75,7 @@ const htmlminConfig = {
   minifyCSS: true// 压缩页面CSS
 }
 const revReplace = require('gulp-rev-replace')
-
+const urlPrefixer = require('gulp-url-prefixer');
 gulp.task('build_html', function () {
   let manifestJs
   let manifestCss
@@ -84,8 +83,12 @@ gulp.task('build_html', function () {
     manifestJs = gulp.src('rev-manifest-js.json')
     manifestCss = gulp.src('rev-manifest-css.json')
   }
+  console.log('[[[[',config.build.publicPath)
   return gulp.src([`${config.srcPath}/**/*.html`])
-    .pipe(gulpIf(!!config.build.cdn, prefix(config.build.cdn, null)))
+    .pipe(gulpIf(!!config.build.publicPath, urlPrefixer.html({
+      prefix: config.build.publicPath,
+      tags: ['script', 'link', 'img']
+    })))
     .pipe(gulpIf(config.build.htmlmin, htmlmin(htmlminConfig)))
     .pipe(gulpIf(config.build.versionHash, revReplace({ manifest: manifestJs })))
     .pipe(gulpIf(config.build.versionHash, revReplace({ manifest: manifestCss })))

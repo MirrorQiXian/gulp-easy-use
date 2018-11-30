@@ -2,6 +2,7 @@ module.exports = {
   srcPath: 'src', // 项目源目录
   spritesPath: 'src/sprites', // 雪碧图生成的目标目录
   build: {
+    // publicPath:'//cdn.com/',
     cssmin: true,
     jsmin: true,
     htmlmin: true,
